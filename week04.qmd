@@ -50,9 +50,21 @@ str(x)
 **Your observations:**
 
 - What differences do you notice between these three ways of creating vectors?
+The three methods would look identical in terms of the output they produce when printed, but they are fundamentally different. 
+
+`c(1, 2, 3, 4, 5, 6)` – Produces a numeric (double) vector. 
+
+The `1:6` expression produces an integer vector. 
+
+A numeric (double) vector. 
+
+So although they look identical when printed, R uses different internal representations to store them in memory. 
+
 - Why might `typeof()` give different results?
 
-*Write your thoughts here:*
+The typeof() function reports the type of storage that is being used in R: When using :, R knows the numbers are whole and stores them as integers. 
+
+When you use functions like c() or seq(), R will treat numeric values as doubles by default, regardless of whether they appear to be integers. This is due to the way R stores numeric variables for efficiency and precision. 
 
 
 
@@ -81,7 +93,21 @@ str(x)
 **Your observations:**
 
 - What happens when you mix integers and doubles in a vector?
+R requires all elements of a vector to be the same type. 
+
+When integers and doubles are mixed, the integers are automatically converted to doubles. 
+
+Therefore, in the vector c(1, 2, 3, 4, 5L, 6L), all elements are considered “double” rather than “integer.” 
+
 - What does the `L` suffix do?
+Adding L after a number is a way to tell R that the number is an integer. 
+
+Example: 
+
+1 → stored as a double 
+
+1L → stored as an integer 
+
 
 *Write your thoughts here:*
 
@@ -130,7 +156,11 @@ glue::glue("This unit is great.
 - What's the difference between `paste()`, `cat()`, and `glue()`?
 
 *Write your analysis here:*
+paste() – Combine several character elements into a new character string (or strings). You can also control separators with sep or collapse. The result is stored in an object. What does the cat() function do in R? It does not return a vector or anything; it just outputs text. Useful for formatted printing with \n (new lines) or \t (tabs) usages. The glue package. It uses backticks and allows the embedding of variables and expressions within ${}. 
 
+What does paste() return? Use when you need to assign or reuse the combined string in your code. 
+hat does cat() do? Use when you need pretty-printed output (with tabs and spaces). 
+What does glue() return? - Use it when you want to embed variables directly into strings for easy readability. 
 
 
 #### Atomic Vectors - Logicals  
@@ -173,7 +203,10 @@ str(x)
 
 *Write your explanation here:*
 
+In R, <- is the assignment operator.The left-hand side of <- must be a valid object name (a variable) that can store a value.1 is a literal constant, not a variable name, so R cannot assign a value to it.That’s why 1 <- 1 produces an error.
 
+= → Used for assignment (similar to <-, though <- is preferred in R style).
+== → Used for comparison, checking if two values are equal.
 
 #### Factors  
 
@@ -200,7 +233,13 @@ as.character(x)
 - How are factors different from character vectors?
 
 *Write your thoughts here:*
+Lists of strings 
 
+Store plain text values (e.g., “spring”, “winter”). R simply views them as strings of text without any inherent structure or categorization. No way to determine a sequence or relationship among them. 
+
+Factors 
+
+Store data as integers that are labels for categories. Each unique value in the column becomes a level (e.g., "spring", "winter"). Because R will know they are categories rather than free text, which is important for any type of statistical modeling. Can be ordered (ordinal factors) if needed, unlike plain characters. 
 
 
 ### Working with Matrices and Arrays  
@@ -225,7 +264,11 @@ m
 - How does R fill matrices by default?
 
 *Write your answer here:*
+The numbers are filled column-wise (which is the default setting). The sequence 1:6 is placed down the first column, then down the second column, etc. 
 
+r matrix(1:6, nrow = 2, byrow = TRUE) # Fills the numbers row by row ``` The sequence is placed horizontally across the first row and then continues to the next row. So the only difference is the direction you fill in the numbers. 
+
+By default, R fills matrices column-wise.That means elements go down the first column before moving across to the next column.
 
 
 #### Arrays  
@@ -259,8 +302,9 @@ x
 - How do 3-dimensional arrays work?
 
 *Write your explanation here:*
+R still needs to fill all the elements of the array according to the specified dimensions. And if there are not enough, R will recycle the given numbers to fill up the array. For example, if you provide 10 numbers but want to create an array of 25 elements, R will repeat those 10 numbers until it fills up the entire array. ⚠️ This sometimes leads to undesired behavior, so beware of passing inputs with incorrect dimensions. 
 
-
+A 3D array is essentially a stack of 2D arrays. For example, the code `array(1:50, dim = c(5, 5, 2))` generates two 5×5 matrices (slices). The first 25 elements will form the first slice and the second 25 elements will form the second slice. You can think of it as a page number, where each page is a separate 2D matrix. 
 
 ### Working with Lists  
 
@@ -287,8 +331,15 @@ x
 - What are the advantages of named lists?
 
 *Write your analysis here:*
+Vectors
 
+Can only store one data type (all numeric, all character, or all logical).Example: c(1, 2, 3) (numeric vector) or c("a", "b") (character vector).
 
+Lists
+
+Can store multiple data types together (numbers, characters, logicals, even other lists).They are more flexible because each element can be completely different.Example: list(1:5, "hello", TRUE, c("a","b"))
+
+Clarity → Names (e.g., x1, x2, x3) make it obvious what each element represents.Easier access → You can use $ to extract by name (e.g., x$x2) instead of relying on numeric positions.Self-documenting → Code is easier to read and maintain since the names describe the data.
 
 ### Working with Data Frames and Tibbles  
 
@@ -338,7 +389,9 @@ x
 
 *Write your thoughts here:*
 
+Tibbles are a modern, more user-friendly version of data frames that integrate well with tidyverse tools.
 
+Use tribble() for small, hand-written data, and tibble() (or read_csv(), etc.) for larger, imported datasets
 
 ## Loading and Saving Data  
 
@@ -369,7 +422,9 @@ waldo::compare(x, x_delim)
 
 *Write your observations here:*
 
+glimpse() is more compact and readable, while str() is more detailed and traditional.
 
+read_csv() is actually a special case of read_delim() with the delimiter fixed to a comma (",").read_delim() requires you to explicitly set the delimiter (e.g., ",", "\t", ";").When both are used with ",", they produce the same tibble — no differences in the data.You’d only see a difference if your file wasn’t comma-separated.
 
 ### Writing Data  
 
