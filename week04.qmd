@@ -455,7 +455,9 @@ waldo::compare(weather_data, weather_check)
 - Why is it good practice to read the data back after saving?
 
 *Write your thoughts here:*
+A file called my_weather_data.csv was created inside the data/ folder.This file contains the weather_data tibble you defined (4 rows × 4 columns).
 
+Reading data back acts as a quality check that the saved file matches the original dataset.
 
 
 ### Selecting and Modifying Values  
