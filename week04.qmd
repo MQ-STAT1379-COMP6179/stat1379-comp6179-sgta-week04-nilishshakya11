@@ -475,6 +475,11 @@ seasons[-2]                  # Exclude second element
 seasons[c(T, T, F, F, F, T, T)]  # Logical indexing
 ```
 
+[1] "spring"
+[1] "spring" "winter" "winter"
+[1] "spring" "summer" "winter" "spring" "winter" "spring" "spring"
+[1] "spring" "winter" "spring" "winter" "spring" "spring"
+[1] "spring" "summer" "spring" "spring"
 
 #### Working with Matrices  
 
@@ -579,7 +584,16 @@ sum(values, na.rm = TRUE)   # Remove missing values
 mean(values, na.rm = TRUE)  # Same for mean
 ```
 
-
+[1] NA
+[1] NA
+ logi NA
+[1] TRUE
+[1] NA
+[1] TRUE
+[1] FALSE FALSE  TRUE FALSE FALSE
+[1] NA
+[1] 12
+[1] 3
 # Data Wrangling with dplyr  
 
 ## Introduction to dplyr  
@@ -741,31 +755,46 @@ filter(babynames, name == Sea)
 **Your corrected code:**
 ```{r fix-code-student, eval=FALSE}
 # Fixed code here:
-
+# Fixed code:
+filter(babynames, name == "Sea")  # Use == for comparison, not =
+filter(babynames, name == "Sea") # Use quotes for strings
 
 ```
 
 **Your explanation of what was wrong:**
 
 
+ 1. Using = instead of == for equality testing
+ 2. Forgetting quotes around character strings
+3. R looks for object named 'Sea', doesn't find it
 
 ## Problem 2: Most Popular Names  
 
 Which name was the most popular for a single gender in a single year? Compare arranging by `prop` vs `n`.
 
 ```{r popular-names-student, eval=FALSE}
-# Your code to find highest proportion:
+# Highest proportion (percentage of all births)
+babynames |>
+  arrange(desc(prop)) |>
+  head(5)
 
 
 # Your code to find highest count:
-
+babynames |>
+  arrange(desc(n)) |>
+  head(5) 
 
 ```
 
 **Your analysis:**
 - Are the results the same? Why or why not?
 
-
+Analysis: They are NOT the same because:
+ - Population grew over time
+ - Early years had fewer total births, so high proportions possible
+ - Recent years have more total births, so higher absolute counts
+ - A name can be a high proportion of a small number, or
+   a small proportion of a very large number
 
 ## Problem 3: Popular Girls Names in 2017  
 
@@ -777,9 +806,20 @@ Write a pipeline that will:
 
 ```{r girls-2017-student, eval=FALSE}
 # Your pipeline here:
+# Step-by-step pipeline
+babynames |> 
+  filter(sex == "F", year == 2017) |>    # 1. Girls in 2017
+  select(name, n) |>                     # 2. Just name and count
+  arrange(desc(n))                       # 3. Most popular first
 
-
+# Alternative with more info:
+babynames |> 
+  filter(sex == "F", year == 2017) |>
+  select(name, n, prop) |>               # Include proportion too
+  arrange(desc(n)) |>
+  head(10)                               # Top 10 only
 ```
+
 
 
 # Tidy Data with `tidyr`  
