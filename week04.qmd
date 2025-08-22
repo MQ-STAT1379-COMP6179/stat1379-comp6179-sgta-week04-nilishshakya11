@@ -847,6 +847,36 @@ table4b  # Population
 
 *Write your analysis here:*
 
+table1 is tidy.
+It follows the tidy data rules:
+Each variable has its own column (country, year, cases, population).Each observation is a row (country–year combination).Each value is a single cell.Because of this, table1 can be analyzed directly with dplyr without extra cleaning.
+
+table2
+
+Has a type column that mixes variables (cases vs population).count holds values for two different concepts → not tidy.
+
+table3
+
+Combines two variables (cases and population) into a single column (rate).Values like "745/19987071" need to be split → not tidy.table4a and table4bYear values (1999, 2000) are spread across column headers instead of rows.Data is split into two separate tables (cases vs population) instead of one → not tidy.
+
+table1
+Row: a single observation (cases + population for a country in a year).
+Column: a variable (country, year, cases, population).
+
+table2
+Row: one measurement (cases or population for a country-year).
+Column: type tells you what variable the count represents.
+
+table3
+Row: one country-year.
+Column: rate combines two variables in one.
+
+table4a
+Row: one country.
+Column: year values are stored as column names (wide format).
+
+table4b
+Same structure as table4a, but with population instead of cases.
 
 
 ## Pivoting Data: Lengthening and Widening  
@@ -895,16 +925,30 @@ cholesterol_data
 
 # Your tasks:
 # 1. Convert to long format
+
+
 # 2. Calculate n, mean, and standard deviation for each diet group
+
+
 ```
 
 ```{r cholesterol-solution-student, eval=FALSE}
 # Task 1 - Convert to long format:
-
+cholesterol_long <- cholesterol_data |>
+  pivot_longer(cols = everything(),
+               names_to = "diet",
+               values_to = "cholesterol")
 
 # Task 2 - Calculate summary statistics:
 
-
+cholesterol_summary <- cholesterol_long |>
+  group_by(diet) |>
+  summarise(
+    n = n(),
+    mean = mean(cholesterol),
+    sd = sd(cholesterol),
+    .groups = "drop"
+  )
 ```
 
 **Your interpretation:**
@@ -912,6 +956,19 @@ cholesterol_data
 - What do the standard deviations tell you?
 
 *Write your analysis here:*
+
+From the summary:
+Oat bran free → mean ≈ 4.79
+Oat bran → mean ≈ 4.51
+The oat bran diet group has the lower average cholesterol.
+This suggests that consuming oat bran may help reduce cholesterol compared to not eating it.
+- What do the standard deviations tell you
+
+Oat bran free → sd ≈ 0.62
+Oat bran → sd ≈ 0.80
+Standard deviation (sd) measures how spread out the values are:
+The oat bran group has a slightly larger spread, meaning cholesterol levels varied more among those participants.
+The oat bran free group is a bit more consistent around its mean.
 
 
 
@@ -928,11 +985,28 @@ d. Store back in appropriate place
 
 ```{r calculate-rates-student, eval=FALSE}
 # Your approach for table2:
-
+# Approach for table2: Pivot to separate cases and population
+table2 |>
+  pivot_wider(
+    names_from = type,        # cases and population become columns
+    values_from = count       # count values fill the columns
+  ) |> 
+  mutate(rate = cases / population * 10000)  # Calculate rate per 10,000
 
 # Your approach for table3:
 
-
+# Approach for table3: Separate the combined rate column
+table3 |>
+  separate_wider_delim(
+    cols = rate,              # Column to separate
+    delim = "/",              # Split on forward slash
+    names = c("cases", "population")  # New column names
+  ) |>
+  mutate(
+    cases = as.numeric(cases),         # Convert to numeric
+    population = as.numeric(population),
+    rate = cases / population * 10000  # Calculate proper rate
+  )
 ```
 
 **Your explanation:**
@@ -940,8 +1014,11 @@ d. Store back in appropriate place
 - Which approach was easier to implement?
 
 *Write your thoughts here:*
+Table2: Cases and population are stored in one column (count) with a type label. This makes it necessary to pivot wider before you can calculate rates.
+Table3: Cases and population are combined into a single string (rate like "745/19987071"). This requires splitting one column into two variables before analysis.
 
-
+Table2 was easier, because pivoting from long to wide with pivot_wider() is straightforward.
+Table3 was trickier, since we had to separate text into numbers and convert them before doing calculations.
 
 # Final Reflection  
 
@@ -951,7 +1028,10 @@ d. Store back in appropriate place
 - How has your understanding of "tidy data" changed?
 
 *Write your reflections here:*
-
+I learned how messy data can take many forms, and how the tidyverse tools help restructure it.
+The most challenging part was handling Table3, because parsing text into separate numeric variables requires an extra cleaning step.
+The dplyr functions I’ll use most often are filter(), group_by(), summarise(), and mutate() since they form the backbone of most analyses.
+My understanding of "tidy data" improved — I now see clearly why each variable needs its own column, each observation its own row, and each value its own cell.
 
 
 **Next steps:**
@@ -959,3 +1039,6 @@ d. Store back in appropriate place
 - How might you apply these skills to your own data?
 
 *Write your thoughts here:*
+
+I’d like to explore more advanced tidyr functions like pivot_longer()/pivot_wider() and practice on real-world messy datasets.
+I can apply these skills to my own data by cleaning it into tidy form before running summaries or visualizations — which will make analysis easier, reproducible, and less error-prone.
