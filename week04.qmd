@@ -424,7 +424,7 @@ waldo::compare(x, x_delim)
 
 glimpse() is more compact and readable, while str() is more detailed and traditional.
 
-read_csv() is actually a special case of read_delim() with the delimiter fixed to a comma (",").read_delim() requires you to explicitly set the delimiter (e.g., ",", "\t", ";").When both are used with ",", they produce the same tibble — no differences in the data.You’d only see a difference if your file wasn’t comma-separated.
+read_csv() is actually a special case of read_delim() with the delimiter fixed to a comma (",").read_delim() requires you to explicitly set the delimiter (e.g., ",", "\t", ";").When both are used with ",", they produce the same tibble — no differences in the data.You’d only see a difference if your file wasn’t comma-separated..
 
 ### Writing Data  
 
